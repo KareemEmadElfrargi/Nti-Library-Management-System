@@ -8,5 +8,8 @@
         <class>org.example.demo.entity.Book</class>
         <class>org.example.demo.entity.Publisher</class>
         <class>org.example.demo.entity.Category</class>
+        <class>org.example.demo.entity.Person</class>
+        <class>org.example.demo.entity.Employee</class>
+        <class>org.example.demo.entity.Customer</class>
     </persistence-unit>
 </persistence>
