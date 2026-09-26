@@ -6,7 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Book {
@@ -24,6 +29,14 @@ public class Book {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id")
     private Publisher publisher;
+
+    @ManyToMany
+    @JoinTable(
+            name = "book_category",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
 
     public Book() {
     }
@@ -58,5 +71,19 @@ public class Book {
 
     public void setPublisher(Publisher publisher) {
         this.publisher = publisher;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void addCategory(Category category) {
+        categories.add(category);
+        category.getBooks().add(this);
+    }
+
+    public void removeCategory(Category category) {
+        categories.remove(category);
+        category.getBooks().remove(this);
     }
 }

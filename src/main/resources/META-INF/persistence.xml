@@ -7,5 +7,6 @@
         <class>org.example.demo.entity.Author</class>
         <class>org.example.demo.entity.Book</class>
         <class>org.example.demo.entity.Publisher</class>
+        <class>org.example.demo.entity.Category</class>
     </persistence-unit>
 </persistence>
