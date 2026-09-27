@@ -22,6 +22,8 @@ public class JpqlQueryRunner {
             fetchAuthorWithBooks(em, "J.R.R. Tolkien");
             countBooksPerAuthor(em);
             compareLazyVsJoinFetch(emf, "J.R.R. Tolkien");
+            findBooksByCategoryName(em, "Fantasy");
+            findAuthorByNameHqlShorthand(em, "J.R.R. Tolkien");
         } finally {
             em.close();
             emf.close();
@@ -117,5 +119,30 @@ public class JpqlQueryRunner {
         for (Book book : fetchedAuthor.getBooks()) {
             System.out.println(" - " + book.getTitle());
         }
+    }
+
+    private static void findBooksByCategoryName(EntityManager em, String categoryName) {
+        TypedQuery<Book> query = em.createQuery(
+                "SELECT b FROM Book b JOIN b.categories c WHERE c.name = :categoryName",
+                Book.class);
+        query.setParameter("categoryName", categoryName);
+
+        List<Book> books = query.getResultList();
+
+        System.out.println("Books in category " + categoryName + ":");
+        for (Book book : books) {
+            System.out.println(" - " + book.getTitle());
+        }
+    }
+
+    private static void findAuthorByNameHqlShorthand(EntityManager em, String authorName) {
+        TypedQuery<Author> query = em.createQuery(
+                "FROM Author a WHERE a.name = :authorName",
+                Author.class);
+        query.setParameter("authorName", authorName);
+
+        Author author = query.getSingleResult();
+
+        System.out.println(author.getName());
     }
 }
