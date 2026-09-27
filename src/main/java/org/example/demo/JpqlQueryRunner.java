@@ -16,6 +16,7 @@ public class JpqlQueryRunner {
 
         try {
             findBooksByAuthorName(em, "J.R.R. Tolkien");
+            findBooksByPublisherName(em, "Houghton Mifflin");
         } finally {
             em.close();
             emf.close();
@@ -31,6 +32,20 @@ public class JpqlQueryRunner {
         List<Book> books = query.getResultList();
 
         System.out.println("Books by " + authorName + ":");
+        for (Book book : books) {
+            System.out.println(" - " + book.getTitle());
+        }
+    }
+
+    private static void findBooksByPublisherName(EntityManager em, String publisherName) {
+        TypedQuery<Book> query = em.createQuery(
+                "SELECT b FROM Book b JOIN FETCH b.publisher p WHERE p.name = :publisherName",
+                Book.class);
+        query.setParameter("publisherName", publisherName);
+
+        List<Book> books = query.getResultList();
+
+        System.out.println("Books published by " + publisherName + ":");
         for (Book book : books) {
             System.out.println(" - " + book.getTitle());
         }
