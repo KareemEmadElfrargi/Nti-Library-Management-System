@@ -27,3 +27,27 @@ Build a small Library Management System using JPA and H2. The goal is to practic
 - Demonstrate what happens when a `Book` is removed from `Author.books` with `orphanRemoval = true`.
 - Demonstrate cascading when persisting an `Author` with new `Book`s.
 - Show one intentional `LazyInitializationException` and explain why it happens.
+
+## Task 2 — Query and Analyze the Library
+
+Using the same project, practice JPQL/HQL, `JOIN FETCH`, aggregation, and Criteria API.
+
+### Requirements
+
+- Find all books by a given author's name using JPQL.
+- Find all books belonging to a given publisher.
+- Find a specific `Book` by id using a positional parameter.
+- Fetch an `Author` together with all of their `Book`s using `JOIN FETCH`.
+- Write an aggregate query that returns each author's name and the number of books they have using `COUNT` and `GROUP BY`.
+- Create a Criteria API query that finds books by title.
+- Extend the Criteria API query so that the title and author-name filters are optional and predicates are added dynamically.
+- Compare a normal LAZY query with the `JOIN FETCH` version and explain why `JOIN FETCH` can prevent `LazyInitializationException` for that use case.
+- Write one query using standard JPQL and explain how a Hibernate-specific HQL feature would differ.
+- As an optional extension, move the Author–Book relationship mapping to `orm.xml` and verify that the runtime mapping remains equivalent.
+
+## Final deliverable
+
+- A working JPA project with the complete domain model.
+- Sample data inserted into H2.
+- All required JPQL and Criteria queries.
+- A short README explaining the relationship mappings, owning sides, fetch choices, cascade choices, inheritance strategy, and query decisions.
