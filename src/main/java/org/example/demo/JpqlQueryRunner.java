@@ -6,6 +6,7 @@ import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import org.example.demo.entity.Author;
 import org.example.demo.entity.Book;
+import org.hibernate.LazyInitializationException;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class JpqlQueryRunner {
             findBooksByPublisherName(em, "Houghton Mifflin");
             fetchAuthorWithBooks(em, "J.R.R. Tolkien");
             countBooksPerAuthor(em);
+            compareLazyVsJoinFetch(emf, "J.R.R. Tolkien");
         } finally {
             em.close();
             emf.close();
@@ -78,6 +80,42 @@ public class JpqlQueryRunner {
         System.out.println("Book count per author:");
         for (Object[] row : results) {
             System.out.println(" - " + row[0] + ": " + row[1]);
+        }
+    }
+
+    private static void compareLazyVsJoinFetch(EntityManagerFactory emf, String authorName) {
+
+        Author lazyAuthor;
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery<Author> query = em.createQuery(
+                    "SELECT a FROM Author a WHERE a.name = :authorName",
+                    Author.class);
+            query.setParameter("authorName", authorName);
+            lazyAuthor = query.getSingleResult();
+
+        }
+
+        try {
+            lazyAuthor.getBooks().size();
+            System.out.println("Books read without error (unexpected).");
+        } catch (LazyInitializationException e) {
+            System.out.println("LazyInitializationException: " + e.getMessage());
+        }
+
+        System.out.println();
+        System.out.println("----- JOIN FETCH query -----");
+        Author fetchedAuthor;
+        try (EntityManager em = emf.createEntityManager()) {
+            TypedQuery<Author> query = em.createQuery(
+                    "SELECT a FROM Author a JOIN FETCH a.books WHERE a.name = :authorName",
+                    Author.class);
+            query.setParameter("authorName", authorName);
+            fetchedAuthor = query.getSingleResult();
+        }
+
+        System.out.println("Books read after close: ");
+        for (Book book : fetchedAuthor.getBooks()) {
+            System.out.println(" - " + book.getTitle());
         }
     }
 }
