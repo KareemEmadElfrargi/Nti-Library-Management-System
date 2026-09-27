@@ -19,6 +19,7 @@ public class JpqlQueryRunner {
             findBooksByAuthorName(em, "J.R.R. Tolkien");
             findBooksByPublisherName(em, "Houghton Mifflin");
             fetchAuthorWithBooks(em, "J.R.R. Tolkien");
+            countBooksPerAuthor(em);
         } finally {
             em.close();
             emf.close();
@@ -64,6 +65,19 @@ public class JpqlQueryRunner {
         System.out.println("Author " + author.getName() + " and their books:");
         for (Book book : author.getBooks()) {
             System.out.println(" - " + book.getTitle());
+        }
+    }
+
+    private static void countBooksPerAuthor(EntityManager em) {
+        TypedQuery<Object[]> query = em.createQuery(
+                "SELECT a.name, COUNT(b) FROM Author a JOIN a.books b GROUP BY a.name",
+                Object[].class);
+
+        List<Object[]> results = query.getResultList();
+
+        System.out.println("Book count per author:");
+        for (Object[] row : results) {
+            System.out.println(" - " + row[0] + ": " + row[1]);
         }
     }
 }
